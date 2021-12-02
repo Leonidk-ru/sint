@@ -51,6 +51,6 @@ RUN /usr/sbin/mysqld --user=root --daemonize=TRUE
 
 EXPOSE 80
 
-COPY apps/nginx/nginx.conf /etc/nginx/nginx.conf
-
+COPY config/nginx.conf /etc/nginx/nginx.conf
+COPY --chown:www-data:www-data  config/config.inc.php /usr/share/phpmyadmin/config.inc.php
 RUN service nginx start
