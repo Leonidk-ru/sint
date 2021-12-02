@@ -35,6 +35,7 @@ apt update && \
 apt install -y php7.4 
 RUN apt install -y php7.4-mysql \
  php7.4-dom \
+ php7.4-fpm \
  php7.4-mbstring\
  php7.4-zip \
  php7.4-xml
@@ -46,4 +47,10 @@ chown -R www-data. /usr/share/phpmyadmin
 RUN curl -L https://wordpress.org/latest.tar.gz | tar xvz  -C /var/www && \
 chown -R www-data. /var/www/wordpress
 
-CMD ["/usr/sbin/mysqld --user=root --daemonize=TRUE"]
+RUN /usr/sbin/mysqld --user=root --daemonize=TRUE
+
+EXPOSE 80
+
+COPY apps/nginx/nginx.conf /etc/nginx/nginx.conf
+
+RUN service nginx start
