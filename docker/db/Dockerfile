@@ -12,8 +12,6 @@ RUN apt-get update && \
  lsb-release \
  apt-transport-https \
  ca-certificates 
-#CMD mkdir /var/run/mysqld && chown -R mysql. /var/run/mysqld
-# CMD mkdir /var/lib/mysql && chown -R mysql. /var/lib/mysql
 CMD chown -R mysql. /var/log/mysql
 RUN curl -O https://repo.mysql.com/mysql-apt-config_0.8.20-1_all.deb && \
  echo mysql-apt-config  mysql-apt-config/select-server  select  mysql-8.0 | debconf-set-selections && \

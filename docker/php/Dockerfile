@@ -39,4 +39,3 @@ chown -R www-data. /usr/share/phpmyadmin
 #chown -R www-data. /var/www/wordpress
 RUN echo "exit 0" > /usr/sbin/policy-rc.d
 CMD /etc/init.d/php7.4-fpm start && nginx -g "daemon off;"
-#CMD ["nginx", "-g", "daemon off;"]
