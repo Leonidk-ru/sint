@@ -1,0 +1,35 @@
+version: '3.2'
+
+services:
+  db:
+    container_name: sint-db
+    tty: true
+    build:
+      dockerfile: ./docker/db/Dockerfile
+      context: .
+      args:
+        - DEBIAN_FRONTEND=noninteractive
+        - MYSQL_ROOT_PASSWORD='StrongPawwsord'
+    restart: unless-stopped
+    command: mysqld 
+    volumes:
+      - ./apps/db:/var/lib/mysql
+      - ./socket:/var/run/mysqld
+      - ./logs:/var/log/mysql
+  php:
+    container_name: sint-php
+    tty: true
+    build:
+      dockerfile: ./docker/php/Dockerfile
+      context: .
+    restart: unless-stopped
+#    command: php7.4-fpm
+    depends_on:
+      - db
+    ports:
+      - 3000:80
+    volumes:
+      - ./apps/wp:/var/www/wordpress
+      - ./socket:/var/run/mysqld
+      - ./logs/nginx:/var/log/nginx
+      - ./apps/pma:/usr/share/phpmyadmin
