@@ -34,8 +34,9 @@ COPY config/nginx.conf /etc/nginx/nginx.conf
 RUN curl -L https://files.phpmyadmin.net/phpMyAdmin/5.0.4/phpMyAdmin-5.0.4-all-languages.tar.gz | tar xvz  -C /usr/share/ && \
  mv /usr/share/phpM* /usr/share/phpmyadmin && \
 chown -R www-data. /usr/share/phpmyadmin
+RUN mkdir /var/www && \
+curl -L https://wordpress.org/wordpress-5.8.2.tar.gz| tar xvz -C /var/www && \
+chown -R www-data. /var/www/wordpress
 
-#RUN curl -L https://wordpress.org/latest.tar.gz | tar xvz  -C /var/www && \
-#chown -R www-data. /var/www/wordpress
 RUN echo "exit 0" > /usr/sbin/policy-rc.d
 CMD /etc/init.d/php7.4-fpm start && nginx -g "daemon off;"
