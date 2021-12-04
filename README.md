@@ -1,7 +1,7 @@
 
 ```sh
 git clone https://github.com/Leonidk-ru/sint.git
-docker-compose build && docker-compose up -d
+docker-compose up -d --build
 ```
 WordPress
 ```sh
