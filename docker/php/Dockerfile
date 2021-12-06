@@ -9,13 +9,6 @@ RUN apt-get update && \
  lsb-release \
  apt-transport-https \
  ca-certificates 
-RUN  curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
-	| tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null && \
-	echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
-	http://nginx.org/packages/debian `lsb_release -cs` nginx" \
-	| tee /etc/apt/sources.list.d/nginx.list && \
-	apt update && \
-	apt install -y nginx=1.20*
 
 RUN curl https://packages.sury.org/php/apt.gpg > /etc/apt/trusted.gpg.d/php.gpg && \
 echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
@@ -29,14 +22,20 @@ apt install -y php7.4 \
  php7.4-zip \
  php7.4-xml
 
-COPY config/nginx.conf /etc/nginx/nginx.conf
 
-RUN curl -L https://files.phpmyadmin.net/phpMyAdmin/5.0.4/phpMyAdmin-5.0.4-all-languages.tar.gz | tar xvz  -C /usr/share/ && \
- mv /usr/share/phpM* /usr/share/phpmyadmin && \
-chown -R www-data. /usr/share/phpmyadmin
-RUN mkdir /var/www && \
-curl -L https://wordpress.org/wordpress-5.8.2.tar.gz| tar xvz -C /var/www && \
-chown -R www-data. /var/www/wordpress
+#CMD mkdir /usr/share/phpmyadmin
+#CMD mkdir /var/www/wordpress
+COPY docker/php/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
+#COPY config/config.inc.php /usr/share/phpmyadmin
+#COPY config/wp-config.php /var/www/wordpress
 
-RUN echo "exit 0" > /usr/sbin/policy-rc.d
-CMD /etc/init.d/php7.4-fpm start && nginx -g "daemon off;"
+#CMD mkdir /var/log/php-fpm 
+#CMD chown -R www-data. /usr/share/phpmyadmin
+
+
+
+#CMD chown -R www-data. /var/www/wordpress
+CMD php-fpm7.4 -F
+#COPY config/config.inc.php /usr/share/phpmyadmin
+#RUN mkdir /var/www && \
+#COPY config/wp-config.php /var/www/wordpress

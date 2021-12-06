@@ -12,7 +12,8 @@ RUN apt-get update && \
  lsb-release \
  apt-transport-https \
  ca-certificates 
-CMD chown -R mysql. /var/log/mysql
+CMD chown -R mysql. /var/log/mysql && 
+
 RUN curl -O https://repo.mysql.com/mysql-apt-config_0.8.20-1_all.deb && \
  echo mysql-apt-config  mysql-apt-config/select-server  select  mysql-8.0 | debconf-set-selections && \
  echo mysql-apt-config  mysql-apt-config/select-product select  Apply | debconf-set-selections && \
@@ -22,11 +23,10 @@ RUN curl -O https://repo.mysql.com/mysql-apt-config_0.8.20-1_all.deb && \
  echo mysql-server      mysql-server/re-root-pass       password $MYSQL_ROOT_PASSWORD | debconf-set-selections && \
  echo mysql-server      mysql-server/default-auth-override select 2 | debconf-set-selections 
 RUN apt-get install -y mysql-server --no-install-recommends
-VOLUME /var/lib/mysql
-VOLUME /var/run/mysqld
 RUN echo "user = mysql" >> /etc/mysql/mysql.conf.d/mysqld.cnf && \
+echo "skip-log-bin" >> /etc/mysql/mysql.conf.d/mysqld.cnf && \
+ rm -f /var/run/mysqld/mysql* && \
  chown -R mysql. /var/run/mysqld && \
  chown -R mysql. /var/lib/mysql && \
  chown -R mysql. /var/log/mysql 
-CMD /usr/sbin/mysqld
-CMD tail -f >> /dev/null
+ENTRYPOINT /usr/sbin/mysqld

@@ -3,33 +3,77 @@ version: '3.2'
 services:
   db:
     container_name: sint-db
-    tty: true
+#    tty: true
     build:
       dockerfile: ./docker/db/Dockerfile
       context: .
       args:
-        - DEBIAN_FRONTEND=noninteractive
         - MYSQL_ROOT_PASSWORD='StrongPawwsord'
     restart: unless-stopped
-    command: mysqld 
+    cap_add:
+      - SYS_NICE
+    depends_on:
+      - seed
     volumes:
-      - ./apps/db:/var/lib/mysql
-      - ./socket:/var/run/mysqld
-      - ./logs:/var/log/mysql
+      - db:/var/lib/mysql
+      - socket-mysql:/var/run/mysqld
+      - logs:/var/log/mysql
   php:
     container_name: sint-php
-    tty: true
+#    tty: true
     build:
       dockerfile: ./docker/php/Dockerfile
       context: .
-    restart: unless-stopped
-#    command: php7.4-fpm
+#    restart: unless-stopped
+#    command: /bin/bash -c /usr/sbin/php-fpm7.4
     depends_on:
       - db
+    volumes:
+      - wp:/var/www/wordpress
+      - socket-mysql:/var/run/mysqld
+      - socket-php:/var/run/php
+      - phpmyadmin:/usr/share/phpmyadmin
+      - logs:/var/log/php-fpm
+  nginx:
+    container_name: sint-nginx
+    tty: true
+    build:
+      dockerfile: ./docker/nginx/Dockerfile
+      context: .
+    restart: unless-stopped
+    depends_on:
+      - php
     ports:
       - 3000:80
     volumes:
-      - ./apps/wp:/var/www/wordpress
-      - ./socket:/var/run/mysqld
-      - ./logs/nginx:/var/log/nginx
-      - ./apps/pma:/usr/share/phpmyadmin
+      - wp:/var/www/wordpress
+      - socket-php:/var/run/php
+      - logs:/var/log/nginx
+      - phpmyadmin:/usr/share/phpmyadmin
+
+  seed:
+    container_name: sint-seed
+    build:
+      dockerfile: ./docker/seed/Dockerfile
+      context: .
+    volumes:
+      - wp:/var/www/wordpress
+      - phpmyadmin:/usr/share/phpmyadmin
+
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: 'apps/db'
+  socket-php:
+  socket-mysql:
+  wp:
+  phpmyadmin:
+  logs:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: 'logs'
