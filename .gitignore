@@ -1,3 +1,5 @@
 ./apps/wp
 ./apps/pma
-
+./logs/php*
+./logs/nginx*
+./logs/error*

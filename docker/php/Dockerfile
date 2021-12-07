@@ -23,18 +23,9 @@ apt install -y php7.4 \
  php7.4-xml
 
 
-#CMD mkdir /usr/share/phpmyadmin
-#CMD mkdir /var/www/wordpress
 COPY docker/php/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
-#COPY config/config.inc.php /usr/share/phpmyadmin
-#COPY config/wp-config.php /var/www/wordpress
-
-#CMD mkdir /var/log/php-fpm 
-#CMD chown -R www-data. /usr/share/phpmyadmin
-
-
-
-#CMD chown -R www-data. /var/www/wordpress
+CMD chown -R www-data. /usr/share/phpmyadmin
+CMD chown -R www-data. /var/www/wordpress
 CMD php-fpm7.4 -F
 #COPY config/config.inc.php /usr/share/phpmyadmin
 #RUN mkdir /var/www && \
