@@ -15,7 +15,7 @@ services:
     depends_on:
       - seed
     volumes:
-      - db:/var/lib/mysql
+      - mysql:/var/lib/mysql
       - socket-mysql:/var/run/mysqld
       - logs:/var/log/mysql
   php:
@@ -61,7 +61,7 @@ services:
       - phpmyadmin:/usr/share/phpmyadmin
 
 volumes:
-  db:
+  mysql:
     driver: local
     driver_opts:
       type: 'none'
